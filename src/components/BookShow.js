@@ -26,7 +26,7 @@ function BookShow({ book, onDelete, onEdit }) {
         const response = await axios.get('https://api.unsplash.com/search/photos', {
           params: { query: book.title, per_page: 1 },
           headers: {
-            Authorization: `Client-ID YOUR_UNSPLASH_ACCESS_KEY`
+            Authorization: `Client-ID -eJ9cgm80FL6F4HMOjqdizufCQAt26Rtq5RS6gj0aQw`
           }
         });
         if (response.data.results.length > 0) {
