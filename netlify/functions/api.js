@@ -1,21 +1,25 @@
-const { readFileSync, writeFileSync } = require('fs');
-const path = require('path');
+const { MongoClient } = require('mongodb');
 
-const dbFilePath = path.join(__dirname, '..', 'db.json');
+const uri = process.env.MONGODB_URI;
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-exports.handler = async (event, context) => {
+exports.handler = async (event) => {
   try {
+    await client.connect();
+    const database = client.db('book-api'); // Your database name
+    const collection = database.collection('books'); // Your collection name
+
     if (event.httpMethod === 'GET') {
-      const data = readFileSync(dbFilePath, 'utf-8');
+      const data = await collection.find({}).toArray();
       return {
         statusCode: 200,
-        body: data,
+        body: JSON.stringify(data),
       };
     }
 
     if (event.httpMethod === 'POST') {
       const newData = JSON.parse(event.body);
-      writeFileSync(dbFilePath, JSON.stringify(newData, null, 2));
+      await collection.insertOne(newData);
       return {
         statusCode: 200,
         body: JSON.stringify({ message: 'Data saved successfully' }),
@@ -31,5 +35,7 @@ exports.handler = async (event, context) => {
       statusCode: 500,
       body: JSON.stringify({ message: 'Internal Server Error', error: error.message }),
     };
+  } finally {
+    await client.close();
   }
 };
