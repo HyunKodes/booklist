@@ -1,36 +1,34 @@
-import React, { useState, useEffect } from "react";
-import BookEdit from "./BookEdit";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import BookEdit from './BookEdit';
+import axios from 'axios';
 
 function BookShow({ book, onDelete, onEdit }) {
   const [showEdit, setShowEdit] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState('');
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await axios.get("/db.json");
+        const response = await axios.get('/db.json');
         setBooks(response.data);
       } catch (error) {
-        console.error("Error fetching books:", error);
+        console.error('Error fetching books:', error);
       }
     };
+
     fetchBooks();
   }, []);
 
   useEffect(() => {
     const fetchImage = async () => {
       try {
-        const response = await axios.get(
-          "https://api.unsplash.com/search/photos",
-          {
-            params: { query: book.title, per_page: 1 },
-            headers: {
-              Authorization: `Client-ID -eJ9cgm80FL6F4HMOjqdizufCQAt26Rtq5RS6gj0aQw`,
-            },
+        const response = await axios.get('https://api.unsplash.com/search/photos', {
+          params: { query: book.title, per_page: 1 },
+          headers: {
+            Authorization: `Client-ID YOUR_UNSPLASH_ACCESS_KEY`
           }
-        );
+        });
         if (response.data.results.length > 0) {
           const image = response.data.results[0];
           const customSizeUrl = `${image.urls.raw}&w=300&h=200&fit=crop`;
@@ -39,7 +37,7 @@ function BookShow({ book, onDelete, onEdit }) {
           setImageUrl(`https://picsum.photos/seed/${book.id}/300/200`);
         }
       } catch (error) {
-        console.error("Error fetching image:", error);
+        console.error('Error fetching image:', error);
         setImageUrl(`https://picsum.photos/seed/${book.id}/300/200`);
       }
     };
@@ -76,6 +74,11 @@ function BookShow({ book, onDelete, onEdit }) {
         <button className="delete" onClick={handleDeleteClick}>
           Delete
         </button>
+      </div>
+      <div className="book-list">
+        {books.map((b) => (
+          <div key={b.id}>{b.title}</div>
+        ))}
       </div>
     </div>
   );
