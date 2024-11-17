@@ -7,7 +7,7 @@ function App() {
   const [books, setBooks] = useState([]);
 
   const fetchBooks = async () => {
-    const response = await axios.get("https://books-persist.netlify.app/.netlify/functions/api");
+    const response = await axios.get("http://localhost:3001/books");
 
     setBooks(response.data);
   };
@@ -16,7 +16,7 @@ function App() {
   }, []);
 
   const editBookById = async (id, newTitle) => {
-    const response = await axios.put(`https://books-persist.netlify.app/.netlify/functions/api/${id}`, {
+    const response = await axios.put(`http://localhost:3001/books/${id}`, {
       title: newTitle,
     });
 
@@ -34,7 +34,7 @@ function App() {
   };
 
   const deleteBookById = async (id) => {
-    await axios.delete(`https://books-persist.netlify.app/.netlify/functions/api/${id}`);
+    await axios.delete(`http://localhost:3001/books/${id}`);
     const updatedBooks = books.filter((book) => {
       return book.id !== id;
     });
@@ -42,31 +42,16 @@ function App() {
     setBooks(updatedBooks);
   };
 
-
   const createBook = async (title) => {
-    try {
-      const response = await axios.post("https://books-persist.netlify.app/.netlify/functions/api", {
-        title,
-      });
-      console.log(response);
-  
-      const updatedBooks = [...books, response.data];
-      setBooks(updatedBooks);
-    } catch (error) {
-      console.error('Error creating book:', error);
-    }
+    const response = await axios.post("http://localhost:3001/books", {
+      title,
+    });
+
+    console.log(response);
+
+    const updatedBooks = [...books, response.data];
+    setBooks(updatedBooks);
   };
-  
-//   const createBook = async (title) => {
-//     const response = await axios.post("https://books-persist.netlify.app/.netlify/functions/api", {
-//       title,
-//     });
-
-//     console.log(response);
-
-//     const updatedBooks = [...books, response.data];
-//     setBooks(updatedBooks);
-//   };
 
   return (
     <div className="app">

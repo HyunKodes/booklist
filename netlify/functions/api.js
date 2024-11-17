@@ -5,6 +5,7 @@ const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 exports.handler = async (event) => {
+  console.log('Event:', event);
   try {
     await client.connect();
     const database = client.db('book-api'); // Your database name
@@ -12,6 +13,7 @@ exports.handler = async (event) => {
 
     if (event.httpMethod === 'GET') {
       const data = await collection.find({}).toArray();
+      console.log('Data:', data);
       return {
         statusCode: 200,
         body: JSON.stringify(data),
@@ -20,6 +22,7 @@ exports.handler = async (event) => {
 
     if (event.httpMethod === 'POST') {
       const newData = JSON.parse(event.body);
+      console.log('New Data:', newData);
       await collection.insertOne(newData);
       return {
         statusCode: 200,
@@ -32,6 +35,7 @@ exports.handler = async (event) => {
       body: JSON.stringify({ message: 'Method not allowed' }),
     };
   } catch (error) {
+    console.error('Error:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ message: 'Internal Server Error', error: error.message }),
