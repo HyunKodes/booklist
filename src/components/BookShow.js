@@ -10,7 +10,7 @@ function BookShow({ book, onDelete, onEdit }) {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await axios.get("/books.json");
+        const response = await axios.get("/db.json");
         setBooks(response.data);
       } catch (error) {
         console.error("Error fetching books:", error);
