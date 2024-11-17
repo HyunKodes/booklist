@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { db } from "./firebase";
 import BookCreate from "./components/BookCreate";
 import BookList from "./components/BookList";
 
@@ -7,67 +7,32 @@ function App() {
   const [books, setBooks] = useState([]);
 
   const fetchBooks = async () => {
-    const response = await axios.get("https://books-persist.netlify.app/.netlify/functions/api");
-
-    setBooks(response.data);
+    const snapshot = await db.collection('books').get();
+    const booksData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setBooks(booksData);
   };
+
   useEffect(() => {
     fetchBooks();
   }, []);
 
+  const createBook = async (title) => {
+    const docRef = await db.collection('books').add({ title });
+    const newBook = { id: docRef.id, title };
+    setBooks([...books, newBook]);
+  };
+
   const editBookById = async (id, newTitle) => {
-    const response = await axios.put(`https://books-persist.netlify.app/.netlify/functions/api/${id}`, {
-      title: newTitle,
-    });
-
-    console.log(response + " this is this response");
-
-    const updatedBooks = books.map((book) => {
-      if (book.id === id) {
-        return { ...book, ...response.data };
-      }
-
-      return book;
-    });
-
+    await db.collection('books').doc(id).update({ title: newTitle });
+    const updatedBooks = books.map(book => book.id === id ? { ...book, title: newTitle } : book);
     setBooks(updatedBooks);
   };
 
   const deleteBookById = async (id) => {
-    await axios.delete(`https://books-persist.netlify.app/.netlify/functions/api/${id}`);
-    const updatedBooks = books.filter((book) => {
-      return book.id !== id;
-    });
-
+    await db.collection('books').doc(id).delete();
+    const updatedBooks = books.filter(book => book.id !== id);
     setBooks(updatedBooks);
   };
-
-
-  const createBook = async (title) => {
-    try {
-      const response = await axios.post("https://books-persist.netlify.app/.netlify/functions/api", {
-        title,
-      });
-      console.log(response);
-  
-      const updatedBooks = [...books, response.data];
-      setBooks(updatedBooks);
-    } catch (error) {
-      console.error('Error creating book:', error);
-    }
-  };
-  
-  
-//   const createBook = async (title) => {
-//     const response = await axios.post("https://books-persist.netlify.app/.netlify/functions/api", {
-//       title,
-//     });
-
-//     console.log(response);
-
-//     const updatedBooks = [...books, response.data];
-//     setBooks(updatedBooks);
-//   };
 
   return (
     <div className="app">
