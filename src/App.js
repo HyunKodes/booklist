@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { db } from "./firebase";
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore";
 import BookCreate from "./components/BookCreate";
 import BookList from "./components/BookList";
 
@@ -7,8 +8,8 @@ function App() {
   const [books, setBooks] = useState([]);
 
   const fetchBooks = async () => {
-    const snapshot = await db.collection('books').get();
-    const booksData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const querySnapshot = await getDocs(collection(db, 'books'));
+    const booksData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     setBooks(booksData);
   };
 
@@ -17,19 +18,21 @@ function App() {
   }, []);
 
   const createBook = async (title) => {
-    const docRef = await db.collection('books').add({ title });
+    const docRef = await addDoc(collection(db, 'books'), { title });
     const newBook = { id: docRef.id, title };
     setBooks([...books, newBook]);
   };
 
   const editBookById = async (id, newTitle) => {
-    await db.collection('books').doc(id).update({ title: newTitle });
+    const bookDoc = doc(db, 'books', id);
+    await updateDoc(bookDoc, { title: newTitle });
     const updatedBooks = books.map(book => book.id === id ? { ...book, title: newTitle } : book);
     setBooks(updatedBooks);
   };
 
   const deleteBookById = async (id) => {
-    await db.collection('books').doc(id).delete();
+    const bookDoc = doc(db, 'books', id);
+    await deleteDoc(bookDoc);
     const updatedBooks = books.filter(book => book.id !== id);
     setBooks(updatedBooks);
   };
