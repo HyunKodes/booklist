@@ -1,8 +1,38 @@
-import { useState } from 'react';
-import BookEdit from './BookEdit';
+import React, { useState, useEffect } from "react";
+import BookEdit from "./BookEdit";
+import axios from "axios";
 
 function BookShow({ book, onDelete, onEdit }) {
   const [showEdit, setShowEdit] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        const response = await axios.get(
+          "https://api.unsplash.com/search/photos",
+          {
+            params: { query: book.title, per_page: 1 },
+            headers: {
+              Authorization: `Client-ID -eJ9cgm80FL6F4HMOjqdizufCQAt26Rtq5RS6gj0aQw`,
+            },
+          }
+        );
+        if (response.data.results.length > 0) {
+          const image = response.data.results[0];
+          const customSizeUrl = `${image.urls.raw}&w=300&h=200&fit=crop`;
+          setImageUrl(customSizeUrl);
+        } else {
+          setImageUrl(`https://picsum.photos/seed/${book.id}/300/200`);
+        }
+      } catch (error) {
+        console.error("Error fetching image:", error);
+        setImageUrl(`https://picsum.photos/seed/${book.id}/300/200`);
+      }
+    };
+
+    fetchImage();
+  }, [book.title, book.id]);
 
   const handleDeleteClick = () => {
     onDelete(book.id);
@@ -24,7 +54,7 @@ function BookShow({ book, onDelete, onEdit }) {
 
   return (
     <div className="book-show">
-      <img alt="books" src={`https://picsum.photos/seed/${book.id}/300/200`} />
+      <img alt="book" src={imageUrl} />
       <div>{content}</div>
       <div className="actions">
         <button className="edit" onClick={handleEditClick}>

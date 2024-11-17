@@ -1,40 +1,12 @@
 {
   "books": [
     {
-      "title": "fdafdadfdaf",
-      "id": 3
+      "title": "Bible",
+      "id": 1
     },
     {
-      "title": "but is this ok or not",
-      "id": 5
-    },
-    {
-      "title": "please stop",
-      "id": 7
-    },
-    {
-      "title": "gjile\\",
-      "id": 8
-    },
-    {
-      "title": "file",
-      "id": 9
-    },
-    {
-      "title": "fdafaf",
-      "id": 10
-    },
-    {
-      "title": "harry potter",
-      "id": 11
-    },
-    {
-      "title": "fdafa - hawaiioooo",
-      "id": 12
-    },
-    {
-      "title": "foxes/turtles",
-      "id": 13
+      "title": "Hamlet",
+      "id": 2
     }
   ]
 }
