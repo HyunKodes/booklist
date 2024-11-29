@@ -31,7 +31,7 @@ function BookShow({ book, onDelete, onEdit }) {
         });
         if (response.data.results.length > 0) {
           const image = response.data.results[0];
-          const customSizeUrl = `${image.urls.raw}&w=300&h=200&fit=crop`;
+          const customSizeUrl = `${image.urls.small}&w=300&h=200&fit=crop`;
           setImageUrl(customSizeUrl);
         } else {
           setImageUrl(`https://picsum.photos/seed/${book.id}/300/200`);
