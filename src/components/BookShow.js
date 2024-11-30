@@ -5,7 +5,6 @@ import axios from 'axios';
 function BookShow({ book, onDelete, onEdit }) {
   const [showEdit, setShowEdit] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
-  const [books, setBooks] = useState([]);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -62,11 +61,7 @@ function BookShow({ book, onDelete, onEdit }) {
           Delete
         </button>
       </div>
-      <div className="book-list">
-        {books.map((b) => (
-          <div key={b.id}>{b.title}</div>
-        ))}
-      </div>
+
     </div>
   );
 }
